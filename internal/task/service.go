@@ -28,7 +28,6 @@ type Task struct {
 
 type TaskService struct {
 	repo TaskRepoInterface
-	// TODO: добавить userClient для проверки существования пользователя
 }
 
 func NewTaskService(r TaskRepoInterface) *TaskService {
@@ -43,9 +42,6 @@ func (s *TaskService) CreateTask(params CreateTaskParams) (*Task, error) {
 	if params.UserID == 0 {
 		return nil, errors.New("user_id is required")
 	}
-
-	// TODO: проверить через gRPC-клиент, что пользователь существует
-	// если пользователя нет - вернуть ошибку
 
 	isDone := false
 	if params.IsDone != nil {
@@ -111,8 +107,6 @@ func (s *TaskService) GetTasksByUser(userID uint) ([]Task, error) {
 		return nil, errors.New("user_id is required")
 	}
 
-	// TODO: проверить через gRPC-клиент, что пользователь существует
-
 	dbTasks, err := s.repo.GetByUserID(userID)
 	if err != nil {
 		return nil, err
@@ -158,7 +152,7 @@ func (s *TaskService) UpdateTask(id uint, params UpdateTaskParams) (*Task, error
 		if *params.UserID == 0 {
 			return nil, errors.New("user_id cannot be 0")
 		}
-		// TODO: проверить через gRPC-клиент, что новый пользователь существует
+		
 		dbTask.UserID = *params.UserID
 		updated = true
 	}
